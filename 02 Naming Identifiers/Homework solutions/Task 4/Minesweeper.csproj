@@ -79,7 +79,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contracts\IPlayer.cs" />
+    <Compile Include="Models\Contracts\IBoard.cs" />
+    <Compile Include="Models\Contracts\IPlayer.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Core\Game.cs" />

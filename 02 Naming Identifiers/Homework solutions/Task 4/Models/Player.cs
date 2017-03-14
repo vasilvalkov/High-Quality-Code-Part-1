@@ -1,4 +1,4 @@
-﻿using Minesweeper.Contracts;
+﻿using Minesweeper.Models.Contracts;
 
 namespace Minesweeper.Models
 {

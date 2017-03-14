@@ -1,4 +1,4 @@
-﻿using Minesweeper.Contracts;
+﻿using Minesweeper.Models.Contracts;
 using Minesweeper.Models;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Minesweeper.Core
         private static int inputColumn = 0;
         private static bool gameStart = true;
         private static bool allCellsWithoutMineOpened = false;
-        private static Board gameBoard = new Board(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
+        private static IBoard gameBoard = new Board(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
         private static char[,] board = gameBoard.Playground;
         private static char[,] minesBoard = gameBoard.AllocateMines();
 

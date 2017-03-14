@@ -1,4 +1,4 @@
-﻿namespace Minesweeper.Contracts
+﻿namespace Minesweeper.Models.Contracts
 {
     public interface IPlayer
     {

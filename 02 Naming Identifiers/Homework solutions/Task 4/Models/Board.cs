@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Minesweeper.Models.Contracts;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Minesweeper.Models
 {
-    public class Board
+    public class Board : IBoard
     {
         public readonly int BoardRowsCount = 5;
         public readonly int BoardColumnsCount = 10;
@@ -36,7 +35,7 @@ namespace Minesweeper.Models
                 return this.playground;
             }
         }
-
+        
         public char[,] CreatePlayground(int boardRows, int boardColumns)
         {
             char[,] board = new char[boardRows, boardColumns];
