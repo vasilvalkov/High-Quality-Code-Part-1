@@ -80,8 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\IPlayer.cs" />
+    <Compile Include="Models\Board.cs" />
     <Compile Include="Models\Player.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Core\Game.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
