@@ -2,6 +2,8 @@
 using Minesweeper.Models;
 using System;
 using System.Collections.Generic;
+using Minesweeper.Core.Contracts;
+using Minesweeper.Core.Providers;
 
 namespace Minesweeper.Core
 {
@@ -11,35 +13,41 @@ namespace Minesweeper.Core
         public const int BOARD_ROWS_COUNT = 5;
         public const int BOARD_COLUMNS_COUNT = 10;
 
+        private static IReader reader = new ConsoleReader();
         private static string command = string.Empty;
         private static int points = 0;
         private static bool stepOnMine = false;
         private static List<IPlayer> topPlayers = new List<IPlayer>(6);
         private static int inputRow = 0;
         private static int inputColumn = 0;
-        private static bool gameStart = true;
+        private static bool gameStarts = true;
         private static bool allCellsWithoutMineOpened = false;
         private static IBoard gameBoard = new Board(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
         private static char[,] board = gameBoard.Playground;
         private static char[,] minesBoard = gameBoard.AllocateMines();
 
+        public Game(IReader reader)
+        {
+            //this.reader = reader;
+        }
+
         public static void Play()
         {
             do
             {
-                if (gameStart)
+                if (gameStarts)
                 {
                     Console.WriteLine("Hajde da igraem na “Mini4KI”. Probvaj si kasmeta da otkriesh poleteta bez mini4ki." +
                     " Komanda 'top' pokazva klasiraneto, 'restart' po4va nova igra, 'exit' izliza i hajde 4ao!");
 
                     Console.WriteLine(gameBoard.Draw());
 
-                    gameStart = false;
+                    gameStarts = false;
                 }
 
                 Console.Write("Daj red i kolona : ");
 
-                command = Console.ReadLine().Trim();
+                command = reader.ReadLine().Trim();
 
                 HandleCommand(command);
 
@@ -50,7 +58,7 @@ namespace Minesweeper.Core
                     Console.Write("\nHrrrrrr! Umria gerojski s {0} to4ki. " +
                         "Daj si niknejm: ", points);
 
-                    string playerName = Console.ReadLine();
+                    string playerName = reader.ReadLine();
                     IPlayer player = new Player(playerName, points);
                     AddToTopPlayers(player);
 
@@ -69,7 +77,7 @@ namespace Minesweeper.Core
                     Console.WriteLine(gameBoard.Draw());
                     Console.WriteLine("Daj si imeto, batka: ");
 
-                    string playerName = Console.ReadLine();
+                    string playerName = reader.ReadLine();
                     IPlayer player = new Player(playerName, points);
                     AddToTopPlayers(player);
 
@@ -81,7 +89,7 @@ namespace Minesweeper.Core
 
             Console.WriteLine("Made in Bulgaria - Uauahahahahaha!");
             Console.WriteLine("AREEEEEEeeeeeee.");
-            Console.Read();
+            reader.Read();
         }
 
         private static void AddToTopPlayers(IPlayer player)
@@ -127,7 +135,7 @@ namespace Minesweeper.Core
                     minesBoard = gameBoard.AllocateMines();
                     Console.WriteLine(gameBoard.Draw());
                     stepOnMine = false;
-                    gameStart = false;
+                    gameStarts = false;
                     break;
                 case "exit":
                     Console.WriteLine("4a0, 4a0, 4a0!");
@@ -167,7 +175,7 @@ namespace Minesweeper.Core
             minesBoard = gameBoard.AllocateMines();
             points = 0;
             allCellsWithoutMineOpened = false;
-            gameStart = true;
+            gameStarts = true;
         }
 
         private static void GetScores(IList<IPlayer> players)
