@@ -4,3 +4,4 @@ Homework tasks
 ### Topics covered
 
 1. [Code-Formatting](01 Code Formatting)
+1. [Naming Identifiers](02 Naming Identifiers)
