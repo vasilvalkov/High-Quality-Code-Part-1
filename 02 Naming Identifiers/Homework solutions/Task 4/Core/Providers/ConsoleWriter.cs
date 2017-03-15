@@ -10,6 +10,11 @@ namespace Minesweeper.Core.Providers
             Console.Write(text);
         }
 
+        public void Write(string format, params object[] arguments)
+        {
+            Console.Write(format, arguments);
+        }
+
         public void WriteLine()
         {
             Console.WriteLine();

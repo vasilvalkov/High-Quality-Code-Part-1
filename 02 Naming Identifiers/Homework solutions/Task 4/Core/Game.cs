@@ -18,7 +18,7 @@ namespace Minesweeper.Core
         private static string command = string.Empty;
         private static int points = 0;
         private static bool stepOnMine = false;
-        private static List<IPlayer> topPlayers = new List<IPlayer>(6);
+        private static List<IPlayer> topPlayers = new List<IPlayer>();
         private static int inputRow = 0;
         private static int inputColumn = 0;
         private static bool gameStarts = true;
@@ -29,7 +29,7 @@ namespace Minesweeper.Core
 
         public Game(IBoard board, IReader inputReader, IWriter writer)
         {
-            // this.gameBoard = board;
+            // this.gameBoard = board(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
             // this.reader = inputReader;
             // this.writer = writer;
         }
