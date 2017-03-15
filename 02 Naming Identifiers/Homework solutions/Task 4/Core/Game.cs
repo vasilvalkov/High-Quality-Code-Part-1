@@ -1,9 +1,9 @@
-﻿using Minesweeper.Models.Contracts;
+﻿using Minesweeper.Core.Contracts;
+using Minesweeper.Core.Providers;
 using Minesweeper.Models;
+using Minesweeper.Models.Contracts;
 using System;
 using System.Collections.Generic;
-using Minesweeper.Core.Contracts;
-using Minesweeper.Core.Providers;
 
 namespace Minesweeper.Core
 {
@@ -14,6 +14,7 @@ namespace Minesweeper.Core
         public const int BOARD_COLUMNS_COUNT = 10;
 
         private static IReader reader = new ConsoleReader();
+        private static IWriter writer = new ConsoleWriter();
         private static string command = string.Empty;
         private static int points = 0;
         private static bool stepOnMine = false;
@@ -26,9 +27,11 @@ namespace Minesweeper.Core
         private static char[,] board = gameBoard.Playground;
         private static char[,] minesBoard = gameBoard.AllocateMines();
 
-        public Game(IReader reader)
+        public Game(IBoard board, IReader inputReader, IWriter writer)
         {
-            //this.reader = reader;
+            // this.gameBoard = board;
+            // this.reader = inputReader;
+            // this.writer = writer;
         }
 
         public static void Play()
@@ -37,15 +40,15 @@ namespace Minesweeper.Core
             {
                 if (gameStarts)
                 {
-                    Console.WriteLine("Hajde da igraem na “Mini4KI”. Probvaj si kasmeta da otkriesh poleteta bez mini4ki." +
+                    writer.WriteLine("Hajde da igraem na “Mini4KI”. Probvaj si kasmeta da otkriesh poleteta bez mini4ki." +
                     " Komanda 'top' pokazva klasiraneto, 'restart' po4va nova igra, 'exit' izliza i hajde 4ao!");
 
-                    Console.WriteLine(gameBoard.Draw());
+                    writer.WriteLine(gameBoard.Draw());
 
                     gameStarts = false;
                 }
 
-                Console.Write("Daj red i kolona : ");
+                writer.Write("Daj red i kolona : ");
 
                 command = reader.ReadLine().Trim();
 
@@ -53,9 +56,9 @@ namespace Minesweeper.Core
 
                 if (stepOnMine)
                 {
-                    Console.WriteLine(gameBoard.Draw());
+                    writer.WriteLine(gameBoard.Draw());
 
-                    Console.Write("\nHrrrrrr! Umria gerojski s {0} to4ki. " +
+                    writer.Write("\nHrrrrrr! Umria gerojski s {0} to4ki. " +
                         "Daj si niknejm: ", points);
 
                     string playerName = reader.ReadLine();
@@ -73,9 +76,9 @@ namespace Minesweeper.Core
 
                 if (allCellsWithoutMineOpened)
                 {
-                    Console.WriteLine("\nBRAVOOOS! Otvri 35 kletki bez kapka kryv.");
-                    Console.WriteLine(gameBoard.Draw());
-                    Console.WriteLine("Daj si imeto, batka: ");
+                    writer.WriteLine("\nBRAVOOOS! Otvri 35 kletki bez kapka kryv.");
+                    writer.WriteLine(gameBoard.Draw());
+                    writer.WriteLine("Daj si imeto, batka: ");
 
                     string playerName = reader.ReadLine();
                     IPlayer player = new Player(playerName, points);
@@ -87,8 +90,8 @@ namespace Minesweeper.Core
                 }
             } while (command != "exit");
 
-            Console.WriteLine("Made in Bulgaria - Uauahahahahaha!");
-            Console.WriteLine("AREEEEEEeeeeeee.");
+            writer.WriteLine("Made in Bulgaria - Uauahahahahaha!");
+            writer.WriteLine("AREEEEEEeeeeeee.");
             reader.Read();
         }
 
@@ -133,12 +136,12 @@ namespace Minesweeper.Core
                 case "restart":
                     board = gameBoard.CreatePlayground(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
                     minesBoard = gameBoard.AllocateMines();
-                    Console.WriteLine(gameBoard.Draw());
+                    writer.WriteLine(gameBoard.Draw());
                     stepOnMine = false;
                     gameStarts = false;
                     break;
                 case "exit":
-                    Console.WriteLine("4a0, 4a0, 4a0!");
+                    writer.WriteLine("4a0, 4a0, 4a0!");
                     break;
                 case "turn":
                     if (minesBoard[inputRow, inputColumn] != '*')
@@ -155,7 +158,7 @@ namespace Minesweeper.Core
                         }
                         else
                         {
-                            Console.WriteLine(gameBoard.Draw());
+                            writer.WriteLine(gameBoard.Draw());
                         }
                     }
                     else
@@ -164,7 +167,7 @@ namespace Minesweeper.Core
                     }
                     break;
                 default:
-                    Console.WriteLine("\nGreshka! nevalidna Komanda\n");
+                    writer.WriteLine("\nGreshka! nevalidna Komanda\n");
                     break;
             }
         }
@@ -180,21 +183,21 @@ namespace Minesweeper.Core
 
         private static void GetScores(IList<IPlayer> players)
         {
-            Console.WriteLine("\nTo4KI:");
+            writer.WriteLine("\nTo4KI:");
 
             if (players.Count > 0)
             {
                 for (int i = 0; i < players.Count; i++)
                 {
-                    Console.WriteLine("{0}. {1} --> {2} kutii",
+                    writer.WriteLine("{0}. {1} --> {2} kutii",
                         i + 1, players[i].Name, players[i].Points);
                 }
 
-                Console.WriteLine();
+                writer.WriteLine();
             }
             else
             {
-                Console.WriteLine("prazna klasaciq!\n");
+                writer.WriteLine("prazna klasaciq!\n");
             }
         }
     }
