@@ -83,6 +83,7 @@
     <Compile Include="Core\Contracts\IWriter.cs" />
     <Compile Include="Core\Providers\ConsoleReader.cs" />
     <Compile Include="Core\Providers\ConsoleWriter.cs" />
+    <Compile Include="Globals\Constants.cs" />
     <Compile Include="Models\Contracts\IBoard.cs" />
     <Compile Include="Models\Contracts\IPlayer.cs" />
     <Compile Include="Models\Board.cs" />

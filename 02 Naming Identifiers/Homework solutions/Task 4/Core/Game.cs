@@ -1,8 +1,6 @@
 ﻿using Minesweeper.Core.Contracts;
-using Minesweeper.Core.Providers;
 using Minesweeper.Models;
 using Minesweeper.Models.Contracts;
-using System;
 using System.Collections.Generic;
 
 namespace Minesweeper.Core
@@ -13,28 +11,38 @@ namespace Minesweeper.Core
         public const int BOARD_ROWS_COUNT = 5;
         public const int BOARD_COLUMNS_COUNT = 10;
 
-        private static IReader reader = new ConsoleReader();
-        private static IWriter writer = new ConsoleWriter();
-        private static string command = string.Empty;
-        private static int points = 0;
-        private static bool stepOnMine = false;
-        private static List<IPlayer> topPlayers = new List<IPlayer>();
-        private static int inputRow = 0;
-        private static int inputColumn = 0;
-        private static bool gameStarts = true;
-        private static bool allCellsWithoutMineOpened = false;
-        private static IBoard gameBoard = new Board(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
-        private static char[,] board = gameBoard.Playground;
-        private static char[,] minesBoard = gameBoard.AllocateMines();
+        private IBoard gameBoard;
+        private IReader reader;
+        private IWriter writer;
+        private string command;
+        private int points;
+        private bool stepOnMine;
+        private List<IPlayer> topPlayers;
+        private int inputRow;
+        private int inputColumn;
+        private bool gameStarts;
+        private bool allCellsWithoutMineOpened;
+        private char[,] playground;
+        private char[,] minesPlayground;
 
         public Game(IBoard board, IReader inputReader, IWriter writer)
         {
-            // this.gameBoard = board(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
-            // this.reader = inputReader;
-            // this.writer = writer;
+            this.gameBoard = board;
+            this.reader = inputReader;
+            this.writer = writer;
+            this.command = string.Empty;
+            this.points = 0;
+            this.stepOnMine = false;
+            this.topPlayers = new List<IPlayer>();
+            this.inputRow = 0;
+            this.inputColumn = 0;
+            this.gameStarts = true;
+            this.allCellsWithoutMineOpened = false;
+            this.playground = gameBoard.Playground;
+            this.minesPlayground = gameBoard.AllocateMines();
         }
 
-        public static void Play()
+        public void Play()
         {
             do
             {
@@ -95,7 +103,7 @@ namespace Minesweeper.Core
             reader.Read();
         }
 
-        private static void AddToTopPlayers(IPlayer player)
+        private void AddToTopPlayers(IPlayer player)
         {
             if (topPlayers.Count < 5)
             {
@@ -115,14 +123,14 @@ namespace Minesweeper.Core
             }
         }
 
-        private static void HandleCommand(string command)
+        private void HandleCommand(string command)
         {
             if (command.Length >= 3)
             {
                 if (int.TryParse(command[0].ToString(), out inputRow) &&
                     int.TryParse(command[2].ToString(), out inputColumn) &&
-                    inputRow <= board.GetLength(0) &&
-                    inputColumn <= board.GetLength(1))
+                    inputRow <= playground.GetLength(0) &&
+                    inputColumn <= playground.GetLength(1))
                 {
                     command = "turn";
                 }
@@ -134,8 +142,8 @@ namespace Minesweeper.Core
                     GetScores(topPlayers);
                     break;
                 case "restart":
-                    board = gameBoard.CreatePlayground(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
-                    minesBoard = gameBoard.AllocateMines();
+                    playground = gameBoard.CreatePlayground(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
+                    minesPlayground = gameBoard.AllocateMines();
                     writer.WriteLine(gameBoard.Draw());
                     stepOnMine = false;
                     gameStarts = false;
@@ -144,9 +152,9 @@ namespace Minesweeper.Core
                     writer.WriteLine("4a0, 4a0, 4a0!");
                     break;
                 case "turn":
-                    if (minesBoard[inputRow, inputColumn] != '*')
+                    if (minesPlayground[inputRow, inputColumn] != '*')
                     {
-                        if (minesBoard[inputRow, inputColumn] == '-')
+                        if (minesPlayground[inputRow, inputColumn] == '-')
                         {
                             gameBoard.RevealNearbyMinesCount(inputRow, inputColumn);
                             points++;
@@ -172,16 +180,16 @@ namespace Minesweeper.Core
             }
         }
 
-        private static void InitializeGame()
+        private void InitializeGame()
         {
-            board = gameBoard.CreatePlayground(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
-            minesBoard = gameBoard.AllocateMines();
+            playground = gameBoard.CreatePlayground(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
+            minesPlayground = gameBoard.AllocateMines();
             points = 0;
             allCellsWithoutMineOpened = false;
             gameStarts = true;
         }
 
-        private static void GetScores(IList<IPlayer> players)
+        private void GetScores(IList<IPlayer> players)
         {
             writer.WriteLine("\nTo4KI:");
 
