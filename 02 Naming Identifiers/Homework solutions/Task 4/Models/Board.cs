@@ -7,25 +7,19 @@ namespace Minesweeper.Models
 {
     public class Board : IBoard
     {
-        public readonly int BoardRowsCount = 5;
-        public readonly int BoardColumnsCount = 10;
+        public readonly int BoardRowsCount;
+        public readonly int BoardColumnsCount;
         private char[,] playground;
         private char[,] minesPlayground;
-        private int points;
-        private bool stepOnMine;
-        private bool gameStart;
-        private bool gameEnd;
         private Random random = new Random();
 
-        public Board(int rowsCount, int columnsCount)
+        public Board(int rowsCount = 5, int columnsCount = 10)
         {
-            this.BoardColumnsCount = rowsCount;
+            this.BoardRowsCount = rowsCount;
             this.BoardColumnsCount = columnsCount;
 
             this.playground = this.CreatePlayground(this.BoardRowsCount, this.BoardColumnsCount);
             this.minesPlayground = this.AllocateMines();
-
-            this.InitializeGame();
         }
 
         public char[,] Playground
@@ -126,14 +120,6 @@ namespace Minesweeper.Models
             builder.AppendLine("   ---------------------\n");
 
             return builder.ToString();
-        }
-
-        private void InitializeGame()
-        {
-            this.points = 0;
-            this.stepOnMine = false;
-            this.gameStart = true;
-            this.gameEnd = false;
         }
 
         private char CountNearbyMines(int row, int col)

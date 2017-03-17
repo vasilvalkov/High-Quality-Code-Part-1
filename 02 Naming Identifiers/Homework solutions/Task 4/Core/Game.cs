@@ -1,4 +1,5 @@
 ﻿using Minesweeper.Core.Contracts;
+using Minesweeper.Globals;
 using Minesweeper.Models;
 using Minesweeper.Models.Contracts;
 using System.Collections.Generic;
@@ -7,10 +8,6 @@ namespace Minesweeper.Core
 {
     public class Game
     {
-        public const int MAX_POINTS = 35;
-        public const int BOARD_ROWS_COUNT = 5;
-        public const int BOARD_COLUMNS_COUNT = 10;
-
         private IBoard gameBoard;
         private IReader reader;
         private IWriter writer;
@@ -31,92 +28,86 @@ namespace Minesweeper.Core
             this.reader = inputReader;
             this.writer = writer;
             this.command = string.Empty;
-            this.points = 0;
-            this.stepOnMine = false;
             this.topPlayers = new List<IPlayer>();
-            this.inputRow = 0;
-            this.inputColumn = 0;
-            this.gameStarts = true;
-            this.allCellsWithoutMineOpened = false;
-            this.playground = gameBoard.Playground;
-            this.minesPlayground = gameBoard.AllocateMines();
+
+            this.InitializeGame();
         }
 
         public void Play()
         {
             do
             {
-                if (gameStarts)
+                if (this.gameStarts)
                 {
-                    writer.WriteLine("Hajde da igraem na “Mini4KI”. Probvaj si kasmeta da otkriesh poleteta bez mini4ki." +
+                    this.writer.WriteLine("Hajde da igraem na “Mini4KI”. Probvaj si kasmeta da otkriesh poleteta bez mini4ki." +
                     " Komanda 'top' pokazva klasiraneto, 'restart' po4va nova igra, 'exit' izliza i hajde 4ao!");
 
-                    writer.WriteLine(gameBoard.Draw());
+                    this.writer.WriteLine(this.gameBoard.Draw());
 
-                    gameStarts = false;
+                    this.gameStarts = false;
                 }
 
-                writer.Write("Daj red i kolona : ");
+                this.writer.Write("Daj red i kolona : ");
 
-                command = reader.ReadLine().Trim();
+                this.command = reader.ReadLine().Trim();
 
-                HandleCommand(command);
+                this.HandleCommand(this.command);
 
-                if (stepOnMine)
+                if (this.stepOnMine)
                 {
-                    writer.WriteLine(gameBoard.Draw());
+                    this.writer.WriteLine(this.gameBoard.Draw());
 
-                    writer.Write("\nHrrrrrr! Umria gerojski s {0} to4ki. " +
-                        "Daj si niknejm: ", points);
+                    this.writer.Write("\nHrrrrrr! Umria gerojski s {0} to4ki. " +
+                        "Daj si niknejm: ", this.points);
 
-                    string playerName = reader.ReadLine();
-                    IPlayer player = new Player(playerName, points);
-                    AddToTopPlayers(player);
+                    string playerName = this.reader.ReadLine();
+                    IPlayer player = new Player(playerName, this.points);
+                    this.AddToTopPlayers(player);
 
-                    topPlayers.Sort((firstPlayer, secondPlayer) => secondPlayer.Name.CompareTo(firstPlayer.Name));
+                    this.topPlayers.Sort((firstPlayer, secondPlayer) => secondPlayer.Name.CompareTo(firstPlayer.Name));
 
-                    topPlayers.Sort((firstPlayer, secondPlayer) => secondPlayer.Points.CompareTo(firstPlayer.Points));
+                    this.topPlayers.Sort((firstPlayer, secondPlayer) => secondPlayer.Points.CompareTo(firstPlayer.Points));
 
-                    GetScores(topPlayers);
+                    this.GetScores(topPlayers);
 
-                    InitializeGame();
+                    this.InitializeGame(false);
                 }
 
-                if (allCellsWithoutMineOpened)
+                if (this.allCellsWithoutMineOpened)
                 {
-                    writer.WriteLine("\nBRAVOOOS! Otvri 35 kletki bez kapka kryv.");
-                    writer.WriteLine(gameBoard.Draw());
-                    writer.WriteLine("Daj si imeto, batka: ");
+                    this.writer.WriteLine("\nBRAVOOOS! Otvri 35 kletki bez kapka kryv.");
+                    this.writer.WriteLine(this.gameBoard.Draw());
+                    this.writer.WriteLine("Daj si imeto, batka: ");
 
-                    string playerName = reader.ReadLine();
+                    string playerName = this.reader.ReadLine();
                     IPlayer player = new Player(playerName, points);
-                    AddToTopPlayers(player);
+                    this.AddToTopPlayers(player);
 
-                    GetScores(topPlayers);
+                    this.GetScores(this.topPlayers);
 
-                    InitializeGame();
+                    this.InitializeGame(false);
                 }
-            } while (command != "exit");
+            } while (this.command != "exit");
 
-            writer.WriteLine("Made in Bulgaria - Uauahahahahaha!");
-            writer.WriteLine("AREEEEEEeeeeeee.");
-            reader.Read();
+            this.writer.WriteLine("Made in Bulgaria - Uauahahahahaha!");
+            this.writer.WriteLine("AREEEEEEeeeeeee.");
+            this.reader.Read();
         }
 
         private void AddToTopPlayers(IPlayer player)
         {
-            if (topPlayers.Count < 5)
+            if (this.topPlayers.Count < 5)
             {
-                topPlayers.Add(player);
+                this.topPlayers.Add(player);
             }
             else
             {
-                for (int i = 0; i < topPlayers.Count; i++)
+                for (int i = 0; i < this.topPlayers.Count; i++)
                 {
-                    if (topPlayers[i].Points < player.Points)
+                    if (this.topPlayers[i].Points < player.Points)
                     {
-                        topPlayers.Insert(i, player);
-                        topPlayers.RemoveAt(topPlayers.Count - 1);
+                        this.topPlayers.Insert(i, player);
+                        this.topPlayers.RemoveAt(this.topPlayers.Count - 1);
                         break;
                     }
                 }
@@ -139,73 +130,77 @@ namespace Minesweeper.Core
             switch (command)
             {
                 case "top":
-                    GetScores(topPlayers);
+                    this.GetScores(this.topPlayers);
                     break;
                 case "restart":
-                    playground = gameBoard.CreatePlayground(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
-                    minesPlayground = gameBoard.AllocateMines();
-                    writer.WriteLine(gameBoard.Draw());
-                    stepOnMine = false;
-                    gameStarts = false;
+                    this.InitializeGame(false);
                     break;
                 case "exit":
-                    writer.WriteLine("4a0, 4a0, 4a0!");
+                    this.writer.WriteLine("4a0, 4a0, 4a0!");
                     break;
                 case "turn":
-                    if (minesPlayground[inputRow, inputColumn] != '*')
-                    {
-                        if (minesPlayground[inputRow, inputColumn] == '-')
-                        {
-                            gameBoard.RevealNearbyMinesCount(inputRow, inputColumn);
-                            points++;
-                        }
-
-                        if (MAX_POINTS == points)
-                        {
-                            allCellsWithoutMineOpened = true;
-                        }
-                        else
-                        {
-                            writer.WriteLine(gameBoard.Draw());
-                        }
-                    }
-                    else
-                    {
-                        stepOnMine = true;
-                    }
+                    this.CommitTurn();
                     break;
                 default:
-                    writer.WriteLine("\nGreshka! nevalidna Komanda\n");
+                    this.writer.WriteLine("\nGreshka! nevalidna Komanda\n");
                     break;
             }
         }
 
-        private void InitializeGame()
+        private void CommitTurn()
         {
-            playground = gameBoard.CreatePlayground(BOARD_ROWS_COUNT, BOARD_COLUMNS_COUNT);
-            minesPlayground = gameBoard.AllocateMines();
-            points = 0;
-            allCellsWithoutMineOpened = false;
-            gameStarts = true;
+            if (this.minesPlayground[this.inputRow, this.inputColumn] != '*')
+            {
+                if (this.minesPlayground[this.inputRow, this.inputColumn] == '-')
+                {
+                    this.gameBoard.RevealNearbyMinesCount(this.inputRow, this.inputColumn);
+                    this.points++;
+                }
+
+                if (Constants.MAX_POINTS == this.points)
+                {
+                    this.allCellsWithoutMineOpened = true;
+                }
+                else
+                {
+                    this.writer.WriteLine(this.gameBoard.Draw());
+                }
+            }
+            else
+            {
+                this.stepOnMine = true;
+            }
+        }
+
+        private void InitializeGame(bool gameStarts = true)
+        {
+            this.playground = this.gameBoard.CreatePlayground(Constants.BOARD_ROWS_COUNT, Constants.BOARD_COLUMNS_COUNT);
+            this.minesPlayground = this.gameBoard.AllocateMines();
+            this.points = 0;
+            this.stepOnMine = false;
+            this.allCellsWithoutMineOpened = false;
+            this.gameStarts = gameStarts;
+            this.inputRow = 0;
+            this.inputColumn = 0;
         }
 
         private void GetScores(IList<IPlayer> players)
         {
-            writer.WriteLine("\nTo4KI:");
+            this.writer.WriteLine("\nTo4KI:");
 
             if (players.Count > 0)
             {
                 for (int i = 0; i < players.Count; i++)
                 {
-                    writer.WriteLine("{0}. {1} --> {2} kutii",
+                    this.writer.WriteLine("{0}. {1} --> {2} kutii",
                         i + 1, players[i].Name, players[i].Points);
                 }
 
-                writer.WriteLine();
+                this.writer.WriteLine();
             }
             else
             {
-                writer.WriteLine("prazna klasaciq!\n");
+                this.writer.WriteLine("prazna klasaciq!\n");
             }
         }
     }
