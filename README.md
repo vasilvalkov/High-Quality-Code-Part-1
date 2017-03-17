@@ -5,4 +5,4 @@ Homework tasks
 
 1. [Code-Formatting](01-Code-Formatting)
 1. [Naming-Identifiers](02 Naming Identifiers)
-1. [Code-Documentation-and-Comments](03 Code Documentation And Comments)
+1. [Code-Documentation-and-Comments](03-Code-Documentation-And-Comments)
